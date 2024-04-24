@@ -1,0 +1,30 @@
+[
+    {
+        "id": 1,
+        "content": "dummy",
+        "image": [],
+        "authorId": 1,
+        "author": {
+          "id": 1,
+          "email": "dummy@mail.com",
+          "fullname": "dummy",
+          "username": "dummy",
+          "profile": {
+            "id": 1,
+            "avatar": "avatar.jpg"
+          },
+          "_count": {
+            "follower": 1,
+            "following": 1
+          },
+          "follower": [],
+          "following": []
+        },
+        "_count": {
+          "likes": 1,
+          "replies": 1
+        },
+        "likes": [],
+        "createdAt": ""
+      }
+]
