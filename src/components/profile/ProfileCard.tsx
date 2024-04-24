@@ -38,7 +38,7 @@ export const ProfileCard: React.FC<Props> = ({ bgColor, user }) => {
 
   useEffect(() => {
     fetchProfile();
-  })
+  }, [])
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Card bgColor={bgColor} color={"white"} rounded={"lg"} shadow={"none"}>
