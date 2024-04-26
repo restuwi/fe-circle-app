@@ -9,14 +9,10 @@ export const loginAsync = createAsyncThunk(
             const res = await APILogin(body)
             const token = res.data.token
             localStorage.setItem("token", token)
-
             return token
         } catch (error) {
             const err = error as unknown as Error
-            console.log(err.message);
-
             thunkAPI.rejectWithValue(err.message)
-
         }
     }
 )

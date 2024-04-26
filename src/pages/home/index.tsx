@@ -10,7 +10,7 @@ const Home: React.FC = () => {
   const auth = useAppSelector((state) => state.auth);
   const { threads, loading } = useAppSelector((state) => state.thread);
   const dispatch = useAppDispatch();
-  
+
   useEffect(() => {
     dispatch(getThreadsAsync());
   }, []);
@@ -25,7 +25,10 @@ const Home: React.FC = () => {
           <Divider color={"gray"} />
           {!loading ? (
             threads?.map((thread) => (
-              <ThreadCard key={thread.id} thread={thread} />
+              <>
+                <ThreadCard key={thread.id} thread={thread} />
+                <Divider color={"gray"} />
+              </>
             ))
           ) : (
             <Flex justifyContent={"center"} mt={"20px"} gap={"20px"}>

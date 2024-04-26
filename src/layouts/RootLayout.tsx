@@ -5,7 +5,6 @@ import Sidebar from "../components/sidebar";
 import { FooterCard } from "../components/footer";
 import { SuggestionCard } from "../components/suggestion";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "../components/auth/layout";
 import { RiArrowLeftLine } from "react-icons/ri";
 import { checkAsync } from "../store/async/auth";
 
@@ -15,36 +14,34 @@ type Props = {
   icon?: React.ReactElement;
   childrenAside?: React.ReactNode;
 };
-const RootLayout: React.FC<Props> = ({ childrenMain, title, icon, childrenAside }) => {
+const RootLayout: React.FC<Props> = ({
+  childrenMain,
+  title,
+  icon,
+  childrenAside,
+}) => {
   const auth = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  const checkToken = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      await dispatch(checkAsync(token))
-    } catch (error) {
-      console.log(error);
+  const dispatch = useAppDispatch();
+  const AuthCheck = async () => {
+    const token = localStorage.token;
+    if (token) {
+      await dispatch(checkAsync(token));
     }
   };
 
   useEffect(() => {
-    checkToken();
+    AuthCheck();
   }, []);
-
   return (
-    <Flex minH="100vh" color={"white"} bgColor={"#1D1D1D"} >
-      <Box flex={1.2} px={"20px"} pt={"20px"}>
-        {!auth.user ? (
-          <>
-            <AuthLayout />
-          </>
-        ) : (
-          <Sidebar />
-        )}
+    <Flex minH="100vh" color={"white"} bgColor={"#1D1D1D"} overflowX={"hidden"}>
+      <Box
+        flex={1.2}
+        px={"20px"}
+        pt={"20px"}
+        display={{ base: "none", md: "inline-block" }}
+      >
+        <Sidebar />
       </Box>
       <Box
         pt={`${title !== "" ? "" : "28px"}`}
@@ -70,9 +67,10 @@ const RootLayout: React.FC<Props> = ({ childrenMain, title, icon, childrenAside 
       <Box
         flex={1.5}
         p={"20px"}
-        display={"flex"}
         flexDirection={"column"}
         gap={"10px"}
+        overflowX={"hidden"}
+        display={{ base: "none", md: "flex" }}
       >
         {childrenAside}
         {auth?.user && <SuggestionCard />}

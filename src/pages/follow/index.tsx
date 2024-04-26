@@ -4,25 +4,29 @@ import { Box, Button, ButtonGroup } from "@chakra-ui/react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import ShowUser from "../../components/user/ShowUser";
 import { getFollowersAsync, getFollowingAsync } from "../../store/async/follow";
-import { checkAsync } from "../../store/async/auth";
+import { ProfileCard } from "../../components/profile";
 
 const Follow: React.FC = () => {
   const { followers, following } = useAppSelector((state) => state.follow);
   const dispatch = useAppDispatch();
-  const { user, token } = useAppSelector((state) => state.auth);
+  const user = useAppSelector((state) => state.auth).user;
   const [active, setActive] = useState<boolean>(true);
 
-  useEffect(() => {
-    dispatch(getFollowersAsync(+user?.id!));
-    dispatch(getFollowingAsync(+user?.id!));
-  }, []);
-
-  const handleActive = () => {
-    dispatch(checkAsync(token))
-    dispatch(getFollowersAsync(+user?.id!));
-    dispatch(getFollowingAsync(+user?.id!));
+  const handleActive = async () => {
+    if (user) {
+      if (active) {
+        await dispatch(getFollowersAsync(user?.id));
+      } else {
+        await dispatch(getFollowingAsync(user?.id))
+      }
+    }
     setActive(!active);
   };
+
+  useEffect(() => {
+    dispatch(getFollowersAsync(user?.id!))
+    dispatch(getFollowingAsync(user?.id!))
+  }, [user])
 
   return (
     <RootLayout
@@ -71,6 +75,9 @@ const Follow: React.FC = () => {
             </Box>
           )}
         </>
+      }
+      childrenAside={
+        <>{user && <ProfileCard user={user} bgColor="#262626" />}</>
       }
     />
   );

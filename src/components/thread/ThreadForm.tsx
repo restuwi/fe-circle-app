@@ -101,6 +101,13 @@ export const ThreadForm: React.FC<Props> = ({
       if (onClose) {
         onClose();
       }
+
+      setFormInput({
+        ...formInput,
+        content: "",
+        image: null
+      })
+      setPreviewImages([])
     } catch (error) {
       console.log(error);
     }
@@ -138,6 +145,7 @@ export const ThreadForm: React.FC<Props> = ({
             focusBorderColor="white"
             _focus={{ borderBottom: "1px solid gray" }}
             _placeholder={{ color: "gray" }}
+            value={formInput.content}
           />
           <FormErrorMessage>content is required.</FormErrorMessage>
         </FormControl>

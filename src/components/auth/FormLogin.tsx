@@ -16,17 +16,14 @@ import React from "react";
 import { RiEyeCloseFill, RiEyeFill } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { checkAsync, loginAsync } from "../../store/async/auth";
-import { getThreadsAsync } from "../../store/async/thread";
-import { IUser } from "../../types/app";
-import { getFollowersAsync, getFollowingAsync } from "../../store/async/follow";
 
 type Props = {
-  changeForm: () => void;
+  changeForm: (form: string) => void;
 };
 
 const FormLogin: React.FC<Props> = ({ changeForm }) => {
   const dispatch = useAppDispatch();
-  const { loading, errorMessage } = useAppSelector((state) => state.auth);
+  const { loading } = useAppSelector((state) => state.auth);
 
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
@@ -43,16 +40,8 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
     e.preventDefault();
     try {
       const token = (await dispatch(loginAsync(formInput))).payload;
-      
-      const user: IUser = (await dispatch(checkAsync(token))).payload;
-      console.log(user);
-      
-      await dispatch(getFollowersAsync(Number(user.id)));
-      await dispatch(getFollowingAsync(Number(user.id)));
-      await dispatch(getThreadsAsync());
-    } catch (error) {
-      console.log(error);
-    }
+      await dispatch(checkAsync(token));
+    } catch (error) {}
   };
 
   return (
@@ -74,7 +63,7 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
           borderColor={"gray"}
           _placeholder={{ color: "gray" }}
         />
-        {errorMessage && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
+        <FormErrorMessage>{}</FormErrorMessage>
       </FormControl>
       <FormControl mb={2}>
         <InputGroup size="md">
@@ -103,25 +92,28 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
               {show ? <RiEyeFill /> : <RiEyeCloseFill />}
             </Button>
           </InputRightElement>
-          {errorMessage && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
+          <FormErrorMessage>{}</FormErrorMessage>
         </InputGroup>
       </FormControl>
 
-      <ChakraLink
-        fontSize={"sm"}
-        textAlign={"right"}
-        display={"block"}
-        as={ReactRouterLink}
-        to={"/forgot-password"}
-      >
-        Forgot Password?
-      </ChakraLink>
+      <Flex justifyContent={"flex-end"}>
+        <Button
+          size={"sm"}
+          variant={"link"}
+          onClick={() => changeForm("forgot-password")}
+          color={"gray"}
+          _hover={{color: "white"}}
+        >
+          Forgot Password?
+        </Button>
+      </Flex>
+
       <Divider my={4} />
       <Flex justifyContent={"space-between"} alignItems={"center"} mt={4}>
         <Text color={"white"} fontSize={"sm"}>
           Don't have an account yet?
           <Button
-            onClick={changeForm}
+            onClick={() => changeForm("register")}
             variant={"link"}
             color={"#04A51E"}
             size={"sm"}

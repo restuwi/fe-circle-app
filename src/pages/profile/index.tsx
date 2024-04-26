@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import RootLayout from "../../layouts/RootLayout";
-import {
-  Button,
-  ButtonGroup,
-  Grid,
-  GridItem,
-  Image,
-} from "@chakra-ui/react";
+import { Button, ButtonGroup, Grid, GridItem, Image } from "@chakra-ui/react";
 import { ProfileCard } from "../../components/profile";
 import { IThread, IUser } from "../../types/app";
 import { useParams } from "react-router-dom";
@@ -14,10 +8,12 @@ import { getUserProfile } from "../../libs/api/call/profile";
 import { getThreadUser } from "../../libs/api/call/thread";
 import { ThreadCard } from "../../components/thread";
 import { RiArrowLeftLine } from "react-icons/ri";
+import { useAppSelector } from "../../store";
 
 const Profile: React.FC = () => {
-  const [active, setActive] = useState<Boolean>(true);
   const { username } = useParams();
+  const user = useAppSelector((state) => state.auth).user;
+  const [active, setActive] = useState<Boolean>(true);
   const [profile, setProfile] = useState<IUser>({
     follower: [],
     following: [],
@@ -39,8 +35,9 @@ const Profile: React.FC = () => {
   const fetchProfile = async () => {
     try {
       const response = await getUserProfile(username!);
+      const userId = response.data.data.id;
+      const resThreadUser = await getThreadUser(+userId);
       setProfile(response.data.data);
-      const resThreadUser = await getThreadUser(response.data.data.id);
       setThreadsUser(resThreadUser.data.data);
     } catch (error) {
       console.error(error);
@@ -50,6 +47,7 @@ const Profile: React.FC = () => {
   useEffect(() => {
     fetchProfile();
   }, [username]);
+
   const handleActive = () => {
     setActive(!active);
   };
@@ -105,6 +103,13 @@ const Profile: React.FC = () => {
                 ));
               })}
             </Grid>
+          )}
+        </>
+      }
+      childrenAside={
+        <>
+          {username && username !== user?.username && (
+            <ProfileCard bgColor="#262626" user={user!} />
           )}
         </>
       }

@@ -13,11 +13,13 @@ import { IUser } from "../../types/app";
 import { search } from "../../libs/api/call/search";
 import ShowUser from "../../components/user/ShowUser";
 import { getSuggestions } from "../../libs/api/call/user";
+import { useAppSelector } from "../../store";
+import { ProfileCard } from "../../components/profile";
 
 const Search: React.FC = () => {
   const [formSearch, setFormSearch] = useState<string>("");
-
   const [users, setUsers] = useState<IUser[] | null>(null);
+  const user = useAppSelector((state) => state.auth).user;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormSearch(e.target.value);
@@ -105,6 +107,7 @@ const Search: React.FC = () => {
           </Flex>
         </>
       }
+      childrenAside={<>{user && <ProfileCard user={user} bgColor="#262626" />}</>}
     />
   );
 };

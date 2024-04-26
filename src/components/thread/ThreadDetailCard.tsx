@@ -27,29 +27,29 @@ export const ThreadDetailCard: React.FC<Props> = ({ thread }) => {
         <WrapItem>
           <Avatar
             size={"sm"}
-            src={`http://localhost:5000/uploads/${thread.author.profile.avatar}`}
+            src={`http://localhost:5000/uploads/${thread?.author?.profile?.avatar}`}
           />
         </WrapItem>
 
         <Box
           lineHeight={"20px"}
-          onClick={() => navigate(`/profile/${thread.author.username}`)}
+          onClick={() => navigate(`/profile/${thread?.author?.username}`)}
         >
-          <Text>{thread.author.fullname}</Text>
-          <Text color={"gray"}>@{thread.author.username}</Text>
+          <Text>{thread?.author?.fullname}</Text>
+          <Text color={"gray"}>@{thread?.author?.username}</Text>
         </Box>
       </Box>
       <Box px={"10px"}>
         <Text
           textAlign={"justify"}
-          onClick={() => navigate(`/thread/${thread.id}`)}
+          onClick={() => navigate(`/thread/${thread?.id}`)}
         >
-          {thread.content}
+          {thread?.content}
         </Text>
 
-        {thread.image && thread.image.length > 1 ? (
+        {thread?.image && thread?.image?.length > 1 ? (
           <Flex gap={2} my={"10px"} flexWrap={"wrap"}>
-            {thread.image?.map((img, index: number) => (
+            {thread?.image?.map((img, index: number) => (
               <Image
                 key={index}
                 flex={1}
@@ -62,7 +62,7 @@ export const ThreadDetailCard: React.FC<Props> = ({ thread }) => {
             ))}
           </Flex>
         ) : (
-          thread.image?.map((img, index: number) => (
+          thread?.image?.map((img, index: number) => (
             <Image
               key={index}
               w={"full"}
@@ -86,7 +86,7 @@ export const ThreadDetailCard: React.FC<Props> = ({ thread }) => {
           leftIcon={<BiCommentDetail />}
           _hover={{ textDecoration: "none" }}
         >
-          {thread._count?.replies} Replies
+          {thread?._count?.replies} Replies
         </Button>
       </ButtonGroup>
     </>

@@ -36,19 +36,16 @@ export const authSlice = createSlice({
     },
     extraReducers(builder) {
         builder.addCase(loginAsync.pending, (state) => {
-            console.log("redux pending", state)
             state.token = "";
             state.loading = true
         })
 
         builder.addCase(loginAsync.fulfilled, (state, action) => {
-            console.log("redux fullfiled", action)
             state.loading = false
             state.token = action.payload
         })
 
         builder.addCase(loginAsync.rejected, (state, action) => {
-            console.log("redux rejected", action)
             state.loading = false
             state.user = undefined
             state.token = ""

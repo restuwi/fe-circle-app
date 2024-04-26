@@ -61,7 +61,13 @@ const ThreadDetailImage: React.FC<Props> = ({ thread, index }) => {
           />
         )}
       </Box>
-      <Box flex={1} overflowY={"auto"} overflowX={"hidden"} h={"90vh"} className="customcustom-scrollbar" >
+      <Box
+        flex={1}
+        overflowY={"auto"}
+        overflowX={"hidden"}
+        h={"90vh"}
+        className="customcustom-scrollbar"
+      >
         <Box
           display={"flex"}
           alignItems={"flex-start"}
@@ -122,7 +128,7 @@ const ThreadDetailImage: React.FC<Props> = ({ thread, index }) => {
           />
         )}
         {replies.map((reply) => (
-          <ThreadCard thread={reply} />
+          <ThreadCard key={reply.id} thread={reply} />
         ))}
       </Box>
     </Flex>

@@ -3,12 +3,12 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Flex,
   Grid,
   GridItem,
   Image,
   Menu,
   MenuButton,
-  MenuDivider,
   MenuItem,
   MenuList,
   Text,
@@ -28,6 +28,7 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { RiEraserFill } from "react-icons/ri";
 import { deleteThread } from "../../libs/api/call/thread";
 import { getThreadsAsync } from "../../store/async/thread";
+import ThreadReplyButton from "./ThreadReplyButton";
 
 type Props = {
   thread: IThread;
@@ -41,7 +42,13 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
 
   const handleDelete = async () => {
     try {
-      const confirm = window.confirm("Are you sure you want to delete this thread?");
+      let textConfirm: string = "";
+      if (thread.threadId) {
+        textConfirm = "Are you sure you want to delete this Reply?";
+      } else {
+        textConfirm = "Are you sure you want to delete this thread?";
+      }
+      const confirm = window.confirm(textConfirm);
 
       if (confirm) {
         await deleteThread(thread.id, token);
@@ -55,7 +62,6 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
       alignItems={"flex-start"}
       gap={"10px"}
       p={"10px"}
-      borderBottom={"1px solid rgba(255,255,255,0.2)"}
       position={"relative"}
     >
       <WrapItem>
@@ -85,12 +91,16 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
         <Box>
           <Text
             textAlign={"justify"}
-            onClick={() => navigate(`/thread/${thread.id}`)}
+            onClick={
+              thread?.threadId
+                ? undefined
+                : () => navigate(`/thread/${thread.id}`)
+            }
           >
             {thread.content}
           </Text>
 
-          {thread.image && thread.image.length > 1 ? (
+          {thread.image && (
             <Grid templateColumns={"repeat(2, 1fr)"} gap={2} my={"10px"}>
               {thread.image?.map((img, index: number) => (
                 <GridItem
@@ -98,11 +108,7 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
                   cursor={"pointer"}
                   key={index}
                   h={"250px"}
-                  colSpan={
-                    thread.image && thread.image?.length < 4 && index === 2
-                      ? 2
-                      : 1
-                  }
+                  colSpan={index % 3 === 0 ? 2 : 1}
                 >
                   <ModalDialog
                     key={index}
@@ -131,30 +137,14 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
                 </GridItem>
               ))}
             </Grid>
-          ) : (
-            thread.image?.map((img, index: number) => (
-              <Image
-                key={index}
-                w={"full"}
-                rounded={"md"}
-                maxH={"250px"}
-                my={"10px"}
-                objectFit={"cover"}
-                src={`http://localhost:5000/uploads/${img.image}`}
-                alt={"img"}
-              />
-            ))
           )}
         </Box>
-        <ButtonGroup variant={"link"} colorScheme="" spacing={"20px"}>
+        <Flex gap={"10px"} alignItems={"flex-start"}>
           <ThreadLikeButton thread={thread} />
-          <Button
-            leftIcon={<BiCommentDetail />}
-            _hover={{ textDecoration: "none" }}
-          >
-            {thread._count.replies} Replies
-          </Button>
-        </ButtonGroup>
+          <Box w={"full"}>
+            <ThreadReplyButton thread={thread} />
+          </Box>
+        </Flex>
       </Box>
       {user && user.username === thread.author.username && (
         <Box position={"absolute"} right={"10px"}>
@@ -172,16 +162,6 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
               w={"max-content"}
               border={"none"}
             >
-              <MenuItem
-                as={"button"}
-                bgColor={"#262626"}
-                py={"0"}
-                color={"gray"}
-                _hover={{ color: "white" }}
-              >
-                Edit
-              </MenuItem>
-              <MenuDivider color={"gray"} />
               <MenuItem
                 icon={<RiEraserFill size={16} />}
                 bgColor={"#262626"}

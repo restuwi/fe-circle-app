@@ -13,7 +13,8 @@ import React, { useState } from "react";
 import { RiEdit2Line, RiImageAddLine } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { updateUserProfile } from "../../libs/api/call/profile";
-import { checkAsync } from "../../store/async/auth";
+import { AuthCheck } from "../../libs/api/call/auth";
+import { SET_LOGIN } from "../../store/slice/auth";
 
 type Props = {
   onClose: () => void;
@@ -36,9 +37,27 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
     bio: user?.profile.bio ?? "",
   });
 
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files, value } = e.target;
     const file = files ? files[0] : null;
+
+    // Periksa apakah file yang dipilih adalah avatar atau cover
+    if (name === "avatar") {
+      if (file) {
+        setAvatarPreview(URL.createObjectURL(file));
+      } else {
+        setAvatarPreview(null);
+      }
+    } else if (name === "cover") {
+      if (file) {
+        setCoverPreview(URL.createObjectURL(file));
+      } else {
+        setCoverPreview(null);
+      }
+    }
+
     setFormInput({
       ...formInput,
       [name]: file || value,
@@ -48,8 +67,10 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
   const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-    
-      if (formInput.avatar?.name === user?.profile.avatar || !formInput.avatar) {
+      if (
+        formInput.avatar?.name === user?.profile.avatar ||
+        !formInput.avatar
+      ) {
         delete formInput.avatar;
       }
 
@@ -69,18 +90,20 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
         delete formInput.bio;
       }
 
-      console.log(formInput);
-      
       await updateUserProfile(formInput);
-
-      dispatch(checkAsync(localStorage.token));
-
+      const res = await AuthCheck(localStorage.token);
+      dispatch(
+        SET_LOGIN({
+          user: res.data.data,
+          token: localStorage.token,
+          message: "",
+        })
+      );
       onClose();
     } catch (error) {
       console.error(error);
     }
   };
-
 
   return (
     <form onSubmit={handleUpdateProfile}>
@@ -96,54 +119,54 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
         position={"relative"}
       >
         {user?.profile.cover ? (
-          <>
+          <FormControl position={"relative"}>
+            <FormLabel
+              position={"absolute"}
+              top={"10px"}
+              right={"0"}
+              cursor={"pointer"}
+            >
+              <Box border={"1px solid white"} p={"5px"} rounded={"full"}>
+                <RiEdit2Line />
+              </Box>
+            </FormLabel>
+            <Input name="cover" onChange={handleChange} hidden type="file" />
+            {coverPreview ? (
+              <Image src={coverPreview} boxSize={"full"} objectFit={"cover"} />
+            ) : (
+              <Image
+                src={`http://localhost:5000/uploads/${user?.profile.cover}`}
+                boxSize={"full"}
+                objectFit={"cover"}
+              />
+            )}
+          </FormControl>
+        ) : (
+          <Box>
             <FormControl>
-              <FormLabel
-                position={"absolute"}
-                top={"10px"}
-                right={"0"}
-                cursor={"pointer"}
-              >
-                <Box border={"1px solid white"} p={"5px"} rounded={"full"}>
-                  <RiEdit2Line />
-                </Box>
-              </FormLabel>
+              {coverPreview ? (
+                <FormLabel>
+                  <Image
+                    src={coverPreview}
+                    w={"full"}
+                    h={"full"}
+                    objectFit={"cover"}
+                  />
+                </FormLabel>
+              ) : (
+                <FormLabel
+                  w={"15%"}
+                  top={"100%"}
+                  left={"50%"}
+                  transform={"translate(-50%, -50%)"}
+                  position={"absolute"}
+                >
+                  <RiImageAddLine size={"sm"} />
+                </FormLabel>
+              )}
               <Input name="cover" onChange={handleChange} hidden type="file" />
             </FormControl>
-            <Image
-              src={`http://localhost:5000/uploads/${user?.profile.cover}`}
-              boxSize={"full"}
-              objectFit={"cover"}
-            />
-          </>
-        ) : (
-          <>
-            <Box
-              bgColor={"#1d1d1d"}
-              h={"full"}
-              display={"flex"}
-              justifyContent={"center"}
-              alignContent={"center"}
-            >
-              <FormControl
-                display={"flex"}
-                justifyContent={"center"}
-                alignItems={"center"}
-              >
-                <FormLabel cursor={"pointer"}>
-                  <Box border={"1px solid white"} p={"12px"} rounded={"full"}>
-                    <RiImageAddLine size={36} />
-                  </Box>
-                </FormLabel>
-                <Input
-                  name="cover"
-                  onChange={handleChange}
-                  hidden
-                  type="file"
-                />
-              </FormControl>
-            </Box>
-          </>
+          </Box>
         )}
       </Box>
 
@@ -154,15 +177,60 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
         mt={"-28px"}
         mb={4}
       >
-        <FormLabel cursor={"pointer"}>
-          <Avatar
-            size={"lg"}
-            icon={<RiImageAddLine size={28} />}
-            src={`http://localhost:5000/uploads/${user?.profile.avatar}`}
-            border={"1px solid gray"}
-            objectPosition={"center"}
-          />
-        </FormLabel>
+        {user?.profile.avatar ? (
+          <Box position={"relative"}>
+            {avatarPreview ? (
+              <Avatar
+                size={"lg"}
+                icon={<RiImageAddLine size={28} />}
+                src={avatarPreview}
+                border={"1px solid gray"}
+                objectPosition={"center"}
+              />
+            ) : (
+              <Avatar
+                size={"lg"}
+                icon={<RiImageAddLine size={28} />}
+                src={`http://localhost:5000/uploads/${user?.profile.avatar}`}
+                border={"1px solid gray"}
+                objectPosition={"center"}
+              />
+            )}
+            <FormLabel
+              cursor={"pointer"}
+              bgColor={"white"}
+              position={"absolute"}
+              top={"0"}
+              right={"-20px"}
+              border={"1px solid #262626"}
+              p={"5px"}
+              rounded={"full"}
+            >
+              <RiEdit2Line color="#262626" />
+            </FormLabel>
+          </Box>
+        ) : (
+          <FormLabel cursor={"pointer"}>
+            {avatarPreview ? (
+              <Avatar
+                size={"lg"}
+                icon={<RiImageAddLine size={28} />}
+                src={avatarPreview}
+                border={"1px solid gray"}
+                objectPosition={"center"}
+              />
+            ) : (
+              <Avatar
+                size={"lg"}
+                icon={<RiImageAddLine size={28} />}
+                src={`http://localhost:5000/uploads/${user?.profile.avatar}`}
+                border={"1px solid gray"}
+                objectPosition={"center"}
+              />
+            )}
+          </FormLabel>
+        )}
+
         <Input name="avatar" onChange={handleChange} hidden type="file" />
       </FormControl>
 

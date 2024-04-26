@@ -55,7 +55,6 @@ const ThreadDetail: React.FC = () => {
     }
   };
 
-
   useEffect(() => {
     refetch();
   }, [id]);
@@ -79,7 +78,10 @@ const ThreadDetail: React.FC = () => {
 
           <Divider />
           {replies?.map((reply) => (
-            <ThreadCard key={reply.id} thread={reply} />
+            <>
+              <ThreadCard key={reply.id} thread={reply} />
+              <Divider color={"gray"} />
+            </>
           ))}
         </>
       }

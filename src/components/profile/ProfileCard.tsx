@@ -10,14 +10,13 @@ import {
   WrapItem,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import cover from "../../assets/cover.png";
 import { IThread, IUser } from "../../types/app";
 import ModalDialog from "../modalDialog/Index";
 import { ProfileUpdateForm } from "./ProfileUpdateForm";
 import { useAppSelector } from "../../store";
 import FollowBtn from "../user/FollowBtn";
-import { getThreadUser } from "../../libs/api/call/thread";
 
 type Props = {
   bgColor?: string;
@@ -25,20 +24,7 @@ type Props = {
 };
 export const ProfileCard: React.FC<Props> = ({ bgColor, user }) => {
   const auth = useAppSelector((state) => state.auth);
-  const [threads, setThreads] = useState<IThread[]>([])
 
-  const fetchProfile = async () => {
-    try {
-      const res = await getThreadUser(auth.user?.id!);
-      setThreads(res.data.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchProfile();
-  }, [])
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Card bgColor={bgColor} color={"white"} rounded={"lg"} shadow={"none"}>
@@ -46,8 +32,8 @@ export const ProfileCard: React.FC<Props> = ({ bgColor, user }) => {
       <CardBody>
         <Image
           src={
-            user.profile.cover
-              ? `http://localhost:5000/uploads/${user.profile.cover}`
+            user?.profile?.cover
+              ? `http://localhost:5000/uploads/${user?.profile?.cover}`
               : cover
           }
           w={"full"}
@@ -59,11 +45,11 @@ export const ProfileCard: React.FC<Props> = ({ bgColor, user }) => {
           <WrapItem pl={6} mt={-10}>
             <Avatar
               border={"2px solid #1d1d1d"}
-              src={`http://localhost:5000/uploads/${user.profile.avatar}`}
+              src={`http://localhost:5000/uploads/${user?.profile?.avatar}`}
               size={"lg"}
             />
           </WrapItem>
-          {auth.user && auth.user.username === user.username ? (
+          {auth?.user && auth?.user?.username === user?.username ? (
             <ModalDialog
               isOpen={isOpen}
               onClose={onClose}
@@ -82,33 +68,28 @@ export const ProfileCard: React.FC<Props> = ({ bgColor, user }) => {
               }
               modalBody={<ProfileUpdateForm onClose={onClose} />}
             />
-          ): <FollowBtn user={user} />}
-
+          ) : (
+            <FollowBtn user={user} />
+          )}
         </Flex>
 
         <Text as={"h1"} fontSize={"xl"} fontWeight={"bold"}>
-          {user.fullname}
+          {user?.fullname}
         </Text>
         <Text as={"p"} color={"gray"}>
-          @{user.username}
+          @{user?.username}
         </Text>
-        <Text as={"p"}>{user.profile.bio}</Text>
+        <Text as={"p"}>{user?.profile?.bio}</Text>
         <Text as={"span"} mr={4}>
-          {user._count.following}
+          {user?._count?.following}
           <Text as={"span"} pl={1} color={"gray"}>
             Follower
           </Text>
         </Text>
         <Text as={"span"} mr={4}>
-          {user._count.follower}
+          {user?._count?.follower}
           <Text as={"span"} pl={1} color={"gray"}>
             Following
-          </Text>
-        </Text>
-        <Text as={"span"} mr={4}>
-          {threads.length}
-          <Text as={"span"} pl={1} color={"gray"}>
-            Post
           </Text>
         </Text>
       </CardBody>

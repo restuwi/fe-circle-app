@@ -14,7 +14,7 @@ import { RiEyeCloseFill, RiEyeFill } from "react-icons/ri";
 import { APIRegister } from "../../libs/api/call/auth";
 
 type Props = {
-  changeForm: () => void;
+  changeForm: (form: string) => void;
 }
 
 const FormRegister: React.FC<Props> = ({ changeForm }) => {
@@ -37,7 +37,7 @@ const FormRegister: React.FC<Props> = ({ changeForm }) => {
     e.preventDefault();
     try {
       await APIRegister(formInput);
-      changeForm();
+      changeForm("login");
     } catch (error) {
       console.log(error);
     }
@@ -123,7 +123,7 @@ const FormRegister: React.FC<Props> = ({ changeForm }) => {
       <Flex justifyContent={"space-between"} alignItems={"center"} mt={4}>
         <Text color={"white"} fontSize={"sm"}>
           Already have Account?{" "}
-          <Button onClick={changeForm} variant={"link"} color={"#04A51E"} size={"sm"}>
+          <Button onClick={() => changeForm("login")} variant={"link"} color={"#04A51E"} size={"sm"}>
             Login
           </Button>
         </Text>
