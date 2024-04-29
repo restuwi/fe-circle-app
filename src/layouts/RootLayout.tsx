@@ -1,12 +1,11 @@
 import { Box, Flex, Button } from "@chakra-ui/react";
-import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../store";
+import React from "react";
+import {useAppSelector } from "../store";
 import Sidebar from "../components/sidebar";
 import { FooterCard } from "../components/footer";
 import { SuggestionCard } from "../components/suggestion";
 import { useNavigate } from "react-router-dom";
 import { RiArrowLeftLine } from "react-icons/ri";
-import { checkAsync } from "../store/async/auth";
 
 type Props = {
   childrenMain?: React.ReactNode;
@@ -22,17 +21,7 @@ const RootLayout: React.FC<Props> = ({
 }) => {
   const auth = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const AuthCheck = async () => {
-    const token = localStorage.token;
-    if (token) {
-      await dispatch(checkAsync(token));
-    }
-  };
-
-  useEffect(() => {
-    AuthCheck();
-  }, []);
+  
   return (
     <Flex minH="100vh" color={"white"} bgColor={"#1D1D1D"} overflowX={"hidden"}>
       <Box

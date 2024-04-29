@@ -124,7 +124,7 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
                         w={"full"}
                         h={"full"}
                         objectFit={"cover"}
-                        src={`http://localhost:5000/uploads/${img.image}`}
+                        src={img.image}
                         alt={"img"}
                       />
                     }

@@ -56,7 +56,7 @@ export const ThreadDetailCard: React.FC<Props> = ({ thread }) => {
                 rounded={"sm"}
                 h={"150px"}
                 objectFit={"cover"}
-                src={`http://localhost:5000/uploads/${img.image}`}
+                src={img.image}
                 alt={"img"}
               />
             ))}
@@ -70,7 +70,7 @@ export const ThreadDetailCard: React.FC<Props> = ({ thread }) => {
               maxH={"250px"}
               my={"10px"}
               objectFit={"cover"}
-              src={`http://localhost:5000/uploads/${img.image}`}
+              src={img.image}
               alt={"img"}
             />
           ))

@@ -17,11 +17,7 @@ export const ThreadLikeButton: React.FC<Props> = ({ thread, title }) => {
   const checkLike = () => {
     if (auth.user) {
       const like = thread?.likes.find((like) => like.userId === auth.user?.id);
-      if (like) {
-        setIsLiked(true);
-      } else {
-        setIsLiked(false);
-      }
+      setIsLiked(like ? true : false);
     }
   };
 

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import RootLayout from "../../layouts/RootLayout";
 import { ThreadCard, ThreadForm } from "../../components/thread";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { Divider, Flex, Spinner } from "@chakra-ui/react";
+import { Box, Divider, Flex, Spinner } from "@chakra-ui/react";
 import { getThreadsAsync } from "../../store/async/thread";
 import { ProfileCard } from "../../components/profile";
 
@@ -25,10 +25,10 @@ const Home: React.FC = () => {
           <Divider color={"gray"} />
           {!loading ? (
             threads?.map((thread) => (
-              <>
+              <Box key={thread.id}>
                 <ThreadCard key={thread.id} thread={thread} />
                 <Divider color={"gray"} />
-              </>
+              </Box>
             ))
           ) : (
             <Flex justifyContent={"center"} mt={"20px"} gap={"20px"}>

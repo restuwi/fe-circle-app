@@ -97,7 +97,7 @@ const Profile: React.FC = () => {
                       w={"full"}
                       rounded={"sm"}
                       objectFit={"cover"}
-                      src={`http://localhost:5000/uploads/${image.image}`}
+                      src={image.image}
                     />
                   </GridItem>
                 ));
@@ -108,7 +108,7 @@ const Profile: React.FC = () => {
       }
       childrenAside={
         <>
-          {username && username !== user?.username && (
+          {user && username && username !== user?.username && (
             <ProfileCard bgColor="#262626" user={user!} />
           )}
         </>

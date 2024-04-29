@@ -35,6 +35,7 @@ export const ThreadForm: React.FC<Props> = ({
   const dispatch = useAppDispatch();
   const [isError, setIsError] = useState<boolean>(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formInput, setFormInput] = useState<{
     content: string;
     threadId?: number;
@@ -83,6 +84,7 @@ export const ThreadForm: React.FC<Props> = ({
   const handlePost = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       if (formInput.content === "" && formInput.image === null) {
         setIsError(true);
       }
@@ -97,7 +99,7 @@ export const ThreadForm: React.FC<Props> = ({
       if (refetchReplies) {
         refetchReplies();
       }
-      
+
       if (onClose) {
         onClose();
       }
@@ -105,11 +107,13 @@ export const ThreadForm: React.FC<Props> = ({
       setFormInput({
         ...formInput,
         content: "",
-        image: null
-      })
-      setPreviewImages([])
+        image: null,
+      });
+      setPreviewImages([]);
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -168,6 +172,7 @@ export const ThreadForm: React.FC<Props> = ({
             />
           </FormControl>
           <Button
+            isLoading={isLoading}
             type="submit"
             variant={"solid"}
             color={"white"}
