@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { updateUserProfile } from "../../libs/api/call/profile";
 import { AuthCheck } from "../../libs/api/call/auth";
 import { SET_LOGIN } from "../../store/slice/auth";
+import { checkAsync } from "../../store/async/auth";
 
 type Props = {
   onClose: () => void;
@@ -43,7 +44,6 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
     const { name, files, value } = e.target;
     const file = files ? files[0] : null;
 
-    // Periksa apakah file yang dipilih adalah avatar atau cover
     if (name === "avatar") {
       if (file) {
         setAvatarPreview(URL.createObjectURL(file));
@@ -99,6 +99,7 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
           message: "",
         })
       );
+      // await dispatch(checkAsync(localStorage.token));
       onClose();
     } catch (error) {
       console.error(error);
@@ -110,65 +111,59 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
       <Text mb={"10px"} color={"white"}>
         Edit Profile
       </Text>
-      <Box
-        w={"full"}
-        h={"100px"}
-        bgColor={"gray.700"}
-        rounded={"md"}
-        overflow={"hidden"}
-        position={"relative"}
-      >
-        {user?.profile.cover ? (
-          <FormControl position={"relative"}>
-            <FormLabel
-              position={"absolute"}
-              top={"10px"}
-              right={"0"}
-              cursor={"pointer"}
-            >
-              <Box border={"1px solid white"} p={"5px"} rounded={"full"}>
-                <RiEdit2Line />
-              </Box>
-            </FormLabel>
-            <Input name="cover" onChange={handleChange} hidden type="file" />
+      {user?.profile.cover ? (
+        <FormControl
+          position={"relative"}
+          h={"100px"}
+          rounded={"md"}
+          overflow={"hidden"}
+        >
+          <FormLabel
+            position={"absolute"}
+            top={"10px"}
+            right={"0"}
+            cursor={"pointer"}
+          >
+            <Box border={"1px solid white"} p={"5px"} rounded={"full"}>
+              <RiEdit2Line />
+            </Box>
+          </FormLabel>
+          {coverPreview ? (
+            <Image src={coverPreview} boxSize={"full"} objectFit={"cover"} />
+          ) : (
+            <Image
+              src={`http://localhost:5000/uploads/${user?.profile.cover}`}
+              boxSize={"full"}
+              objectFit={"cover"}
+            />
+          )}
+          <Input name="cover" onChange={handleChange} hidden type="file" />
+        </FormControl>
+      ) : (
+        <FormControl
+          h={"100px"}
+          rounded={"md"}
+          overflow={"hidden"}
+          bgColor={"gray.700"}
+        >
+          <FormLabel w={"full"} h={"full"} cursor={"pointer"}>
             {coverPreview ? (
               <Image src={coverPreview} boxSize={"full"} objectFit={"cover"} />
             ) : (
-              <Image
-                src={`http://localhost:5000/uploads/${user?.profile.cover}`}
-                boxSize={"full"}
-                objectFit={"cover"}
-              />
+              <Flex
+                w={"full"}
+                h={"full"}
+                alignItems={"center"}
+                justifyContent={"center"}
+              >
+                <RiImageAddLine size={"50px"} />
+              </Flex>
             )}
-          </FormControl>
-        ) : (
-          <Box>
-            <FormControl>
-              {coverPreview ? (
-                <FormLabel>
-                  <Image
-                    src={coverPreview}
-                    w={"full"}
-                    h={"full"}
-                    objectFit={"cover"}
-                  />
-                </FormLabel>
-              ) : (
-                <FormLabel
-                  w={"15%"}
-                  top={"100%"}
-                  left={"50%"}
-                  transform={"translate(-50%, -50%)"}
-                  position={"absolute"}
-                >
-                  <RiImageAddLine size={"sm"} />
-                </FormLabel>
-              )}
-              <Input name="cover" onChange={handleChange} hidden type="file" />
-            </FormControl>
-          </Box>
-        )}
-      </Box>
+          </FormLabel>
+
+          <Input name="cover" onChange={handleChange} hidden type="file" />
+        </FormControl>
+      )}
 
       <FormControl
         display={"flex"}
@@ -236,12 +231,13 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
 
       <FormControl position={"relative"} mb={4}>
         <FormLabel
-          bgColor={"#262626"}
+          bgColor={formInput.fullname ? "#262626" : "transparent"}
           px={"5px"}
           zIndex={"10"}
           color={"gray"}
-          top={formInput.fullname ? "-10px" : "12px"}
-          left={formInput.fullname ? "18px" : "10px"}
+          top={formInput.fullname ? "-12px" : "12px"}
+          rounded={"full"}
+          left={formInput.fullname ? "20px" : "10px"}
           position={"absolute"}
           transition={"all 0.3s"}
         >
@@ -258,12 +254,13 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
       </FormControl>
       <FormControl position={"relative"} mb={4}>
         <FormLabel
-          bgColor={"#262626"}
+          bgColor={formInput.username ? "#262626" : "transparent"}
           px={"5px"}
           zIndex={"10"}
           color={"gray"}
-          top={formInput.username ? "-10px" : "12px"}
-          left={formInput.username ? "18px" : "10px"}
+          rounded={"full"}
+          top={formInput.username ? "-12px" : "12px"}
+          left={formInput.username ? "20px" : "10px"}
           position={"absolute"}
           transition={"all 0.3s"}
         >
@@ -280,12 +277,13 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
       </FormControl>
       <FormControl position={"relative"} mb={4}>
         <FormLabel
-          bgColor={"#262626"}
+          bgColor={formInput.bio ? "#262626" : "transparent"}
           px={"5px"}
           zIndex={"10"}
           color={"gray"}
-          top={formInput.bio ? "-10px" : "12px"}
-          left={formInput.bio ? "18px" : "10px"}
+          rounded={"full"}
+          top={formInput.bio ? "-12px" : "12px"}
+          left={formInput.bio ? "20px" : "10px"}
           position={"absolute"}
           transition={"all 0.3s"}
         >
