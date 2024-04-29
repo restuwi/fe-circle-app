@@ -6,6 +6,8 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Grid,
+  GridItem,
   Image,
   Input,
   WrapItem,
@@ -195,17 +197,31 @@ export const ThreadForm: React.FC<Props> = ({
           p={"10px"}
           borderBottom={"1px solid rgba(255,255,255,0.2)"}
         >
-          {previewImages?.map((img, index: number) => (
-            <Image
-              flex={1}
-              key={index}
-              rounded={"sm"}
-              h={previewImages.length >= 2 ? "150px" : ""}
-              objectFit={"cover"}
-              src={img}
-              alt={"img"}
-            />
-          ))}
+          <Grid templateColumns={"repeat(2, 1fr)"} gap={2} my={"10px"}>
+            {previewImages?.map((img, index: number) => (
+              <GridItem
+                key={index}
+                h={"250px"}
+                colSpan={
+                  previewImages && previewImages.length < 2 && index === 0
+                    ? 2 // Jika hanya ada satu gambar, gunakan colSpan 2
+                    : previewImages.length === 3 && index === 0
+                    ? 2 // Jika ada tiga gambar dan ini adalah gambar pertama, gunakan colSpan 2
+                    : 1 // Untuk kasus lainnya, gunakan colSpan 1
+                }
+              >
+                <Image
+                  key={index}
+                  rounded={"md"}
+                  w={"full"}
+                  h={"full"}
+                  objectFit={"cover"}
+                  src={img}
+                  alt={"img"}
+                />
+              </GridItem>
+            ))}
+          </Grid>
         </Flex>
       )}
     </>

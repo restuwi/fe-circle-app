@@ -108,7 +108,13 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
                   cursor={"pointer"}
                   key={index}
                   h={"250px"}
-                  colSpan={index % 3 === 0 ? 2 : 1}
+                  colSpan={
+                    thread.image && thread.image?.length < 2 && index === 0
+                      ? 2 // Jika hanya ada satu gambar, gunakan colSpan 2
+                      : thread.image?.length === 3 && index === 0
+                      ? 2 // Jika ada tiga gambar dan ini adalah gambar pertama, gunakan colSpan 2
+                      : 1 // Untuk kasus lainnya, gunakan colSpan 1
+                  }
                 >
                   <ModalDialog
                     key={index}
