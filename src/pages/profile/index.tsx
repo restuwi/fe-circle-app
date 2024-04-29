@@ -58,7 +58,7 @@ const Profile: React.FC = () => {
       title={profile.fullname}
       childrenMain={
         <>
-          <ProfileCard bgColor="transparent" user={profile} />
+          <ProfileCard bgColor="transparent" user={user && user?.username === username ? user : profile} />
           <ButtonGroup display={"flex"} borderBottom={"1px solid gray"}>
             <Button
               onClick={handleActive}

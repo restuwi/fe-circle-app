@@ -17,7 +17,7 @@ const FollowBtn: React.FC<Props> = ({ user }) => {
   const [isFollowing, setIsFollowing] = useState(false);
 
   const checkFollowing = () => {
-    if (auth.user || user) {
+    if (auth.user && user) {
       const following = auth.user?.follower.find(
         (following) => following.followingId === user.id
       );
@@ -41,9 +41,12 @@ const FollowBtn: React.FC<Props> = ({ user }) => {
           message: "",
         })
       );
-      setIsLoading(false);
       setIsFollowing(!isFollowing);
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
