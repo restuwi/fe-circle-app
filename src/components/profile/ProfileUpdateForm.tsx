@@ -23,6 +23,7 @@ type Props = {
 
 export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
   const user = useAppSelector((state) => state.auth).user;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const [formInput, setFormInput] = useState<{
     fullname?: string;
@@ -67,6 +68,7 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
   const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setIsLoading(true)
       if (
         formInput.avatar?.name === user?.profile.avatar ||
         !formInput.avatar
@@ -103,6 +105,8 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
       onClose();
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -132,7 +136,7 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
             <Image src={coverPreview} boxSize={"full"} objectFit={"cover"} />
           ) : (
             <Image
-              src={`http://localhost:5000/uploads/${user?.profile.cover}`}
+              src={user?.profile.cover}
               boxSize={"full"}
               objectFit={"cover"}
             />
@@ -186,7 +190,7 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
               <Avatar
                 size={"lg"}
                 icon={<RiImageAddLine size={28} />}
-                src={`http://localhost:5000/uploads/${user?.profile.avatar}`}
+                src={user?.profile.avatar}
                 border={"1px solid gray"}
                 objectPosition={"center"}
               />
@@ -218,7 +222,7 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
               <Avatar
                 size={"lg"}
                 icon={<RiImageAddLine size={28} />}
-                src={`http://localhost:5000/uploads/${user?.profile.avatar}`}
+                src={user?.profile.avatar}
                 border={"1px solid gray"}
                 objectPosition={"center"}
               />
@@ -301,6 +305,7 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
 
       <Flex justify={"flex-end"}>
         <Button
+          isLoading={isLoading}
           type="submit"
           variant={"solid"}
           color={"white"}

@@ -12,20 +12,17 @@ const Follow: React.FC = () => {
   const user = useAppSelector((state) => state.auth).user;
   const [active, setActive] = useState<boolean>(true);
 
-  const handleActive = async () => {
+  const fetchFollows = async () => {
     if (user) {
-      if (active) {
         await dispatch(getFollowersAsync(user?.id));
-      } else {
         await dispatch(getFollowingAsync(user?.id))
-      }
     }
-    setActive(!active);
   };
 
+  
+
   useEffect(() => {
-    dispatch(getFollowersAsync(user?.id!))
-    dispatch(getFollowingAsync(user?.id!))
+    fetchFollows();
   }, [user])
 
   return (
@@ -35,7 +32,7 @@ const Follow: React.FC = () => {
         <>
           <ButtonGroup display={"flex"} borderBottom={"1px solid gray"}>
             <Button
-              onClick={handleActive}
+              onClick={() => setActive(true)}
               variant={"link"}
               color={active ? "white" : "gray"}
               borderBottom={active ? "3px solid #04A51E" : ""}
@@ -46,7 +43,7 @@ const Follow: React.FC = () => {
               Followers
             </Button>
             <Button
-              onClick={handleActive}
+              onClick={() => setActive(false)}
               variant={"link"}
               color={!active ? "white" : "gray"}
               flex={"1"}

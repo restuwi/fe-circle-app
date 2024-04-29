@@ -31,11 +31,7 @@ export const ProfileCard: React.FC<Props> = ({ bgColor, user }) => {
       <CardHeader mb={-8}>Profile</CardHeader>
       <CardBody>
         <Image
-          src={
-            user?.profile?.cover
-              ? `http://localhost:5000/uploads/${user?.profile?.cover}`
-              : cover
-          }
+          src={user?.profile?.cover ? user?.profile?.cover : cover}
           w={"full"}
           rounded={"md"}
           h={"115px"}
@@ -45,7 +41,7 @@ export const ProfileCard: React.FC<Props> = ({ bgColor, user }) => {
           <WrapItem pl={6} mt={-10}>
             <Avatar
               border={"2px solid #1d1d1d"}
-              src={`http://localhost:5000/uploads/${user?.profile?.avatar}`}
+              src={user.profile.avatar}
               size={"lg"}
             />
           </WrapItem>
