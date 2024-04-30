@@ -1,8 +1,6 @@
 import {
   Avatar,
   Box,
-  Button,
-  ButtonGroup,
   Flex,
   Grid,
   GridItem,
@@ -18,7 +16,6 @@ import {
 import React from "react";
 import { IThread } from "../../types/app";
 import interval from "../../libs/momment/interval";
-import { BiCommentDetail } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { ThreadLikeButton } from "./ThreadLikeButton";
 import ModalDialog from "../modalDialog/Index";
