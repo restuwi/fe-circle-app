@@ -1,6 +1,6 @@
 import { Box, Flex, Button } from "@chakra-ui/react";
 import React from "react";
-import {useAppSelector } from "../store";
+import { useAppSelector } from "../store";
 import Sidebar from "../components/sidebar";
 import { FooterCard } from "../components/footer";
 import { SuggestionCard } from "../components/suggestion";
@@ -21,7 +21,7 @@ const RootLayout: React.FC<Props> = ({
 }) => {
   const auth = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
-  
+
   return (
     <Flex minH="100vh" color={"white"} bgColor={"#1D1D1D"} overflowX={"hidden"}>
       <Box

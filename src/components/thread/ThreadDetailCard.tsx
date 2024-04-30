@@ -4,9 +4,12 @@ import {
   Button,
   ButtonGroup,
   Flex,
+  Grid,
+  GridItem,
   Image,
   Text,
   WrapItem,
+  useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
 import { IThread } from "../../types/app";
@@ -14,6 +17,8 @@ import { BiCommentDetail } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { ThreadLikeButton } from "./ThreadLikeButton";
+import ThreadDetailImage from "./ThreadDetailImage";
+import ModalDialog from "../modalDialog/Index";
 
 type Props = {
   thread: IThread;
@@ -21,6 +26,7 @@ type Props = {
 
 export const ThreadDetailCard: React.FC<Props> = ({ thread }) => {
   const navigate = useNavigate();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <>
       <Box display={"flex"} alignItems={"center"} gap={"10px"} p={"10px"}>
@@ -47,34 +53,50 @@ export const ThreadDetailCard: React.FC<Props> = ({ thread }) => {
           {thread?.content}
         </Text>
 
-        {thread?.image && thread?.image?.length > 1 ? (
-          <Flex gap={2} my={"10px"} flexWrap={"wrap"}>
-            {thread?.image?.map((img, index: number) => (
-              <Image
-                key={index}
-                flex={1}
-                rounded={"sm"}
-                h={"150px"}
-                objectFit={"cover"}
-                src={img.image}
-                alt={"img"}
-              />
-            ))}
-          </Flex>
-        ) : (
-          thread?.image?.map((img, index: number) => (
-            <Image
-              key={index}
-              w={"full"}
-              rounded={"md"}
-              maxH={"250px"}
-              my={"10px"}
-              objectFit={"cover"}
-              src={img.image}
-              alt={"img"}
-            />
-          ))
-        )}
+        {thread.image && (
+            <Grid templateColumns={"repeat(2, 1fr)"} gap={2} my={"10px"}>
+              {thread.image?.map((img, index: number) => (
+                <GridItem
+                  onClick={onOpen}
+                  cursor={"pointer"}
+                  key={index}
+                  h={"150px"}
+                  colSpan={
+                    thread.image && thread.image?.length < 2 && index === 0
+                      ? 2 // Jika hanya ada satu gambar, gunakan colSpan 2
+                      : thread.image?.length === 3 && index === 0
+                      ? 2 // Jika ada tiga gambar dan ini adalah gambar pertama, gunakan colSpan 2
+                      : 1 // Untuk kasus lainnya, gunakan colSpan 1
+                  }
+                >
+                  <ModalDialog
+                    key={index}
+                    isOpen={isOpen}
+                    onOpen={onOpen}
+                    onClose={onClose}
+                    bgColor="#262626"
+                    modalSize="full"
+                    triggerBtn={
+                      <Image
+                        key={index}
+                        rounded={"md"}
+                        w={"full"}
+                        h={"full"}
+                        objectFit={"cover"}
+                        src={img.image}
+                        alt={"img"}
+                      />
+                    }
+                    modalBody={
+                      <>
+                        <ThreadDetailImage thread={thread} index={index} />
+                      </>
+                    }
+                  />
+                </GridItem>
+              ))}
+            </Grid>
+          )}
       </Box>
       <Text p={"10px"} color={"gray"} fontSize={"sm"}>
         {moment(thread?.createdAt).format("h:mm A")} •{" "}

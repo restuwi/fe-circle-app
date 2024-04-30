@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import RootLayout from "../../layouts/RootLayout";
-import { Button, ButtonGroup, Grid, GridItem, Image } from "@chakra-ui/react";
+import {
+  Button,
+  ButtonGroup,
+  Grid,
+  GridItem,
+  Image,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { ProfileCard } from "../../components/profile";
 import { IThread, IUser } from "../../types/app";
 import { useParams } from "react-router-dom";
@@ -9,6 +16,8 @@ import { getThreadUser } from "../../libs/api/call/thread";
 import { ThreadCard } from "../../components/thread";
 import { RiArrowLeftLine } from "react-icons/ri";
 import { useAppSelector } from "../../store";
+import ModalDialog from "../../components/modalDialog/Index";
+import ThreadDetailImage from "../../components/thread/ThreadDetailImage";
 
 const Profile: React.FC = () => {
   const { username } = useParams();
@@ -31,7 +40,7 @@ const Profile: React.FC = () => {
   });
 
   const [threadsUser, setThreadsUser] = useState<IThread[]>([]);
-
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const fetchProfile = async () => {
     try {
       const response = await getUserProfile(username!);
@@ -58,7 +67,10 @@ const Profile: React.FC = () => {
       title={profile.fullname}
       childrenMain={
         <>
-          <ProfileCard bgColor="transparent" user={user && user?.username === username ? user : profile} />
+          <ProfileCard
+            bgColor="transparent"
+            user={user && user?.username === username ? user : profile}
+          />
           <ButtonGroup display={"flex"} borderBottom={"1px solid gray"}>
             <Button
               onClick={handleActive}
@@ -88,20 +100,42 @@ const Profile: React.FC = () => {
               <ThreadCard key={thread.id} thread={thread} />
             ))
           ) : (
-            <Grid templateColumns={"repeat(3, 1fr)"} gap={"2px"} p="2px">
-              {threadsUser?.map((thread) => {
-                return thread.image?.map((image, idx: number) => (
-                  <GridItem key={idx} h={"200px"}>
-                    <Image
-                      h={"full"}
-                      w={"full"}
-                      rounded={"sm"}
-                      objectFit={"cover"}
-                      src={image.image}
-                    />
-                  </GridItem>
-                ));
-              })}
+            <Grid templateColumns="repeat(3, 1fr)" gap={1}>
+              {threadsUser?.map(
+                (thread) =>
+                  thread.image &&
+                  thread.image.map((img, idx) => (
+                    <GridItem
+                      onClick={onOpen}
+                      cursor={"pointer"}
+                      key={idx}
+                      h={"250px"}
+                    >
+                      <ModalDialog
+                        isOpen={isOpen}
+                        onOpen={onOpen}
+                        onClose={onClose}
+                        bgColor="#262626"
+                        modalSize="full"
+                        triggerBtn={
+                          <Image
+                            rounded={"md"}
+                            w={"full"}
+                            h={"full"}
+                            objectFit={"cover"}
+                            src={img.image}
+                            alt={"img"}
+                          />
+                        }
+                        modalBody={
+                          <>
+                            <ThreadDetailImage thread={thread} />
+                          </>
+                        }
+                      />
+                    </GridItem>
+                  ))
+              )}
             </Grid>
           )}
         </>

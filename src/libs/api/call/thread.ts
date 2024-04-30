@@ -22,13 +22,13 @@ export const createThread = async (body: {
     threadId?: number
 }) => {
     const formData = new FormData()
-    if(body.image !== null) {
-        for(let i = 0; i <body.image.length; i++) {
+    if (body.image !== null) {
+        for (let i = 0; i < body.image.length; i++) {
             formData.append("image", body.image[i])
         }
     }
 
-    if(body.threadId) {
+    if (body.threadId) {
         formData.append("threadId", body.threadId.toString())
     }
 

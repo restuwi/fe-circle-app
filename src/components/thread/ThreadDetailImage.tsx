@@ -9,7 +9,7 @@ import {
   Text,
   WrapItem,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThreadLikeButton } from "./ThreadLikeButton";
 import { IThread } from "../../types/app";
@@ -22,14 +22,15 @@ import { ThreadForm } from "./ThreadForm";
 
 type Props = {
   thread: IThread;
-  index: number;
 };
 
-const ThreadDetailImage: React.FC<Props> = ({ thread, index }) => {
+const ThreadDetailImage: React.FC<Props> = ({ thread }) => {
   const auth = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const [replies, setReplies] = React.useState<IThread[]>([]);
 
+  console.log(thread);
+  
   const fetchReplies = async () => {
     try {
       const response = await getReplies(+thread.id);
@@ -43,24 +44,71 @@ const ThreadDetailImage: React.FC<Props> = ({ thread, index }) => {
     fetchReplies();
   }, [thread]);
 
-  const imageUrl = thread.image
-    ? `http://localhost:5000/uploads/${thread.image[index].image}`
-    : "";
+
+  const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const slides = thread.image?.map((img) => {
+    return img.image;
+  });
+
+  const slidesCount = slides?.length;
+  const prevSlide = () => {
+    setCurrentSlide((s) => (s === 0 ? slidesCount! - 1 : s - 1));
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((s) => (s === slidesCount! - 1 ? 0 : s + 1));
+  };
+
+  const carouselStyle = {
+    transition: "all .5s",
+    ml: `-${currentSlide * 100}%`,
+  };
 
   return (
     <Flex mt={"20px"}>
-      <Box flex={2.5}>
-        {imageUrl && ( // Only render Image component if imageUrl exists
-          <Image
-            w={"full"}
-            h={"90vh"}
-            objectFit={"cover"}
-            src={imageUrl}
-            rounded={"md"}
-            alt="detailimage"
-          />
-        )}
-      </Box>
+      <Flex w="full" overflow="hidden" rounded={"md"} pos="relative" flex={2.5}>
+        <Flex h="90vh" w="full" {...carouselStyle}>
+          {slides?.map((slide, sid) => (
+            <Box key={`slide-${sid}`} boxSize="full" shadow="md" flex="none">
+              <Text
+                color="white"
+                fontSize="xs"
+                p="8px 12px"
+                pos="absolute"
+                top="0"
+              >
+                {sid + 1} / {slidesCount}
+              </Text>
+              <Image
+                src={slide}
+                alt="carousel image"
+                w={"full"}
+                h={"full"}
+                backgroundSize="cover"
+                objectFit={"cover"}
+              />
+            </Box>
+          ))}
+        </Flex>
+        <Text
+          position={"absolute"}
+          cursor={"pointer"}
+          top={"50%"}
+          left="10px"
+          onClick={prevSlide}
+        >
+          &#10094;
+        </Text>
+        <Text
+          position={"absolute"}
+          cursor={"pointer"}
+          top={"50%"}
+          right="10px"
+          onClick={nextSlide}
+        >
+          &#10095;
+        </Text>
+      </Flex>
       <Box
         flex={1}
         overflowY={"auto"}
@@ -76,10 +124,7 @@ const ThreadDetailImage: React.FC<Props> = ({ thread, index }) => {
           position={"relative"}
         >
           <WrapItem>
-            <Avatar
-              size={"sm"}
-              src={`http://localhost:5000/uploads/${thread.author.profile.avatar}`}
-            />
+            <Avatar size={"sm"} src={thread.author.profile.avatar} />
           </WrapItem>
 
           <Box

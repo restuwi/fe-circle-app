@@ -68,7 +68,7 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
   const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       if (
         formInput.avatar?.name === user?.profile.avatar ||
         !formInput.avatar
@@ -106,7 +106,7 @@ export const ProfileUpdateForm: React.FC<Props> = ({ onClose }) => {
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 

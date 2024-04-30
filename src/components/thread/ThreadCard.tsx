@@ -76,7 +76,6 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
         display={"flex"}
         flexDir={"column"}
         w={"full"}
-        gap={"7px"}
       >
         <Box
           display={"flex"}
@@ -136,7 +135,7 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
                     }
                     modalBody={
                       <>
-                        <ThreadDetailImage thread={thread} index={index} />
+                        <ThreadDetailImage thread={thread} />
                       </>
                     }
                   />
@@ -145,7 +144,7 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
             </Grid>
           )}
         </Box>
-        <Flex gap={"10px"} alignItems={"flex-start"}>
+        <Flex gap={"10px"} alignItems={"flex-start"} >
           <ThreadLikeButton thread={thread} />
           <Box w={"full"}>
             <ThreadReplyButton thread={thread} />
