@@ -62,10 +62,10 @@ const Search: React.FC = () => {
 
   return (
     <RootLayout
-      title=""
+      title="Search"
       childrenMain={
         <>
-          <form onSubmit={handleSearch} style={{ paddingInline: "1rem" }}>
+          <form onSubmit={handleSearch} style={{ paddingInline: "1rem", marginTop: "1rem" }}>
             <FormControl>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
