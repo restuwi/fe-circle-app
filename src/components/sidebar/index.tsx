@@ -85,7 +85,14 @@ const Sidebar: React.FC = () => {
                   onClick={link.name === "Follows" ? handleFollows : undefined}
                   as={ReactRouterLink}
                   color={
-                    location.pathname === `${link.to}` ? "#04A51E" : "white"
+                    location.pathname ===
+                    `${
+                      link.to === "/profile/"
+                        ? link.to + auth.user?.username
+                        : link.to
+                    }`
+                      ? "#04A51E"
+                      : "white"
                   }
                   _hover={{
                     textDecoration: "none",

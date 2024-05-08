@@ -6,13 +6,15 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React from "react";
+import { APIForgotPassword } from "../../libs/api/call/auth";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   changeForm: (form: string) => void;
 };
 
 const FormForgotPassword: React.FC<Props> = ({ changeForm }) => {
-
+  const navigate = useNavigate()
   const [formInput, setFormInput] = React.useState<{
     email: string;
   }>({
@@ -22,6 +24,9 @@ const FormForgotPassword: React.FC<Props> = ({ changeForm }) => {
   const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      const res = await APIForgotPassword(formInput.email);
+      console.log(res);
+      navigate("/reset-password")
     } catch (error) {
       console.log(error);
     }

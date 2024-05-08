@@ -19,7 +19,7 @@ const ShowUser: React.FC<Props> = ({ user }) => {
         gap={"15px"}
       >
         <Avatar
-          src={`http://localhost:5000/uploads/${user?.profile?.avatar}`}
+          src={user?.profile?.avatar}
           size={"sm"}
         />
         <Box lineHeight={1.2}>

@@ -51,7 +51,9 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
         await deleteThread(thread.id, token);
         dispatch(getThreadsAsync());
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <Box
@@ -68,12 +70,7 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
         />
       </WrapItem>
 
-      <Box
-        color={"white"}
-        display={"flex"}
-        flexDir={"column"}
-        w={"full"}
-      >
+      <Box color={"white"} display={"flex"} flexDir={"column"} w={"full"}>
         <Box
           display={"flex"}
           gap={"10px"}
@@ -141,7 +138,7 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
             </Grid>
           )}
         </Box>
-        <Flex gap={"10px"} alignItems={"flex-start"} >
+        <Flex gap={"10px"} alignItems={"flex-start"}>
           <ThreadLikeButton thread={thread} />
           <Box w={"full"}>
             <ThreadReplyButton thread={thread} />

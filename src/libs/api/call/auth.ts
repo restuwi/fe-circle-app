@@ -27,3 +27,7 @@ export const AuthCheck = async (token: string) => {
     })
 }
 
+export const APIForgotPassword = async (email: string) => {
+    return await API.post("forgot-password", { email }) 
+}
+

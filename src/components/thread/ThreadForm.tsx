@@ -96,16 +96,15 @@ export const ThreadForm: React.FC<Props> = ({
       }
 
       await createThread(formInput);
-      dispatch(getThreadsAsync());
-
+      
       if (refetchReplies) {
         refetchReplies();
       }
-
+      
       if (onClose) {
         onClose();
       }
-
+      dispatch(getThreadsAsync());
       setFormInput({
         ...formInput,
         content: "",
