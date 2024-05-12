@@ -29,7 +29,7 @@ const ModalDialog: React.FC<Props> = ({
     <>
       {triggerBtn}
       <Modal isOpen={isOpen} onClose={onClose} size={modalSize}>
-        <ModalOverlay />
+        <ModalOverlay bg={"none"} />
         <ModalContent bgColor={bgColor} color={"white"}>
           <ModalCloseButton />
           <ModalBody py={"18px"}>{modalBody}</ModalBody>

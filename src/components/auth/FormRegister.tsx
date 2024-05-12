@@ -3,6 +3,7 @@ import {
   Divider,
   Flex,
   FormControl,
+  FormErrorMessage,
   Heading,
   Input,
   InputGroup,
@@ -12,95 +13,94 @@ import {
 import React from "react";
 import { RiEyeCloseFill, RiEyeFill } from "react-icons/ri";
 import { APIRegister } from "../../libs/api/call/auth";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { registerSchema } from "../../libs/yup/validation/auth";
+import { IAuthRegister } from "../../types/app";
 
 type Props = {
   changeForm: (form: string) => void;
-}
+};
 
 const FormRegister: React.FC<Props> = ({ changeForm }) => {
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IAuthRegister>({
+    resolver: yupResolver(registerSchema),
+  });
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
 
-  const [formInput, setFormInput] = React.useState<{
-    fullname: string;
-    email: string;
-    username: string;
-    password: string;
-  }>({
-    fullname: "",
-    email: "",
-    username: "",
-    password: "",
-  });
-
-  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleRegister = async (data: IAuthRegister) => {
     try {
-      await APIRegister(formInput);
+      setIsLoading(true);
+      await APIRegister(data);
       changeForm("login");
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleRegister}>
+    <form onSubmit={handleSubmit(handleRegister)}>
       <Heading color={"#04A51E"}>circle</Heading>
       <Text mb={2} color={"white"} fontWeight={"bold"} fontSize={"1.2rem"}>
         Create account Circle
       </Text>
-      <FormControl mb={2}>
+      <FormControl mb={2} isInvalid={!!errors.fullname}>
         <Input
           type="text"
           placeholder="Fullname"
-          name="fullname"
-          onChange={(e) =>
-            setFormInput({ ...formInput, fullname: e.target.value })
-          }
+          {...register("fullname")}
           color={"white"}
           focusBorderColor="white"
           borderColor={"gray"}
           _placeholder={{ color: "gray" }}
         />
+        <FormErrorMessage>
+          {errors.fullname && errors.fullname.message}
+        </FormErrorMessage>
       </FormControl>
-      <FormControl mb={2}>
+      <FormControl mb={2} isInvalid={!!errors.email}>
         <Input
           type="email"
           placeholder="Email"
-          name="email"
-          onChange={(e) =>
-            setFormInput({ ...formInput, email: e.target.value })
-          }
+          {...register("email")}
           color={"white"}
           focusBorderColor="white"
           borderColor={"gray"}
           _placeholder={{ color: "gray" }}
         />
+        <FormErrorMessage>
+          {errors.email && errors.email.message}
+        </FormErrorMessage>
       </FormControl>
-      <FormControl mb={2}>
+      <FormControl mb={2} isInvalid={!!errors.username}>
         <Input
           type="text"
           placeholder="Username"
-          name="username"
-          onChange={(e) =>
-            setFormInput({ ...formInput, username: e.target.value })
-          }
+          {...register("username")}
           color={"white"}
           focusBorderColor="white"
           borderColor={"gray"}
           _placeholder={{ color: "gray" }}
         />
+        <FormErrorMessage>
+          {errors.username && errors.username.message}
+        </FormErrorMessage>
       </FormControl>
-      <FormControl mb={2}>
+      <FormControl mb={2} isInvalid={!!errors.password}>
         <InputGroup size="md">
           <Input
             pr="4.5rem"
             type={show ? "text" : "password"}
-            name="password"
-            onChange={(e) =>
-              setFormInput({ ...formInput, password: e.target.value })
-            }
             color={"white"}
+            {...register("password")}
             focusBorderColor="white"
             borderColor={"gray"}
             _placeholder={{ color: "gray" }}
@@ -118,16 +118,25 @@ const FormRegister: React.FC<Props> = ({ changeForm }) => {
             </Button>
           </InputRightElement>
         </InputGroup>
+        <FormErrorMessage>
+          {errors.password && errors.password.message}
+        </FormErrorMessage>
       </FormControl>
       <Divider my={4} />
       <Flex justifyContent={"space-between"} alignItems={"center"} mt={4}>
         <Text color={"white"} fontSize={"sm"}>
           Already have Account?{" "}
-          <Button onClick={() => changeForm("login")} variant={"link"} color={"#04A51E"} size={"sm"}>
+          <Button
+            onClick={() => changeForm("login")}
+            variant={"link"}
+            color={"#04A51E"}
+            size={"sm"}
+          >
             Login
           </Button>
         </Text>
         <Button
+          isLoading={isLoading}
           type="submit"
           variant={"solid"}
           color={"white"}

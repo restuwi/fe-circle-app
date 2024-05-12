@@ -16,6 +16,11 @@ import React from "react";
 import { RiEyeCloseFill, RiEyeFill } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { checkAsync, loginAsync } from "../../store/async/auth";
+import { useForm } from "react-hook-form";
+import { IAuthLogin } from "../../types/app";
+import { loginSchema } from "../../libs/yup/validation/auth";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { AlertError } from "../../libs/sweetalert2";
 
 type Props = {
   changeForm: (form: string) => void;
@@ -23,59 +28,59 @@ type Props = {
 
 const FormLogin: React.FC<Props> = ({ changeForm }) => {
   const dispatch = useAppDispatch();
-  const { loading } = useAppSelector((state) => state.auth);
+  const { loading, errorMessage } = useAppSelector((state) => state.auth);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IAuthLogin>({
+    resolver: yupResolver(loginSchema),
+  });
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
 
-  const [formInput, setFormInput] = React.useState<{
-    username: string;
-    password: string;
-  }>({
-    username: "",
-    password: "",
-  });
-
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleLogin = async (data: IAuthLogin) => {
     try {
-      const token = (await dispatch(loginAsync(formInput))).payload;
-      await dispatch(checkAsync(token));
+      const action = await dispatch(loginAsync(data));
+      if (loginAsync.fulfilled.match(action)) {
+        localStorage.setItem("token", action.payload);
+        await dispatch(checkAsync(action.payload));
+      } else if (loginAsync.rejected.match(action)) {
+        const errorText = action.payload as string;
+        AlertError(errorText);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleSubmit(handleLogin)}>
       <Heading color={"#04A51E"}>circle</Heading>
       <Text mb={2} color={"white"} fontWeight={"bold"} fontSize={"1.2rem"}>
         Login
       </Text>
-      <FormControl mb={2}>
+      <FormControl mb={2} isInvalid={!!errors.username || !!errorMessage}>
         <Input
           type="text"
           placeholder="Email or Username"
-          name="username"
-          onChange={(e) =>
-            setFormInput({ ...formInput, username: e.target.value })
-          }
+          {...register("username")}
           color={"white"}
           focusBorderColor="white"
           borderColor={"gray"}
           _placeholder={{ color: "gray" }}
         />
-        <FormErrorMessage>{}</FormErrorMessage>
+        <FormErrorMessage>
+          {(errors.username && errors.username.message) || errorMessage}
+        </FormErrorMessage>
       </FormControl>
-      <FormControl mb={2}>
+      <FormControl mb={2} isInvalid={!!errors.password || !!errorMessage}>
         <InputGroup size="md">
           <Input
             pr="4.5rem"
             type={show ? "text" : "password"}
-            name="password"
-            onChange={(e) =>
-              setFormInput({ ...formInput, password: e.target.value })
-            }
+            {...register("password")}
             color={"white"}
             focusBorderColor="white"
             borderColor={"gray"}
@@ -94,8 +99,10 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
               {show ? <RiEyeFill /> : <RiEyeCloseFill />}
             </Button>
           </InputRightElement>
-          <FormErrorMessage>{}</FormErrorMessage>
         </InputGroup>
+        <FormErrorMessage>
+          {(errors.password && errors.password.message) || errorMessage}
+        </FormErrorMessage>
       </FormControl>
 
       <Flex justifyContent={"flex-end"}>
