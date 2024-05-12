@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Routes, Route, Outlet, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 import Search from "./pages/search";
 import Profile from "./pages/profile";
@@ -19,14 +19,6 @@ const App: React.FC = () => {
     }
   };
 
-  const CheckToken = () => {
-    const token = localStorage.token;
-    if (token) {
-      return <Outlet />;
-    }
-    return <Navigate to={"/"}/>;
-  };
-
   useEffect(() => {
     AuthCheck();
   }, []);
@@ -37,9 +29,7 @@ const App: React.FC = () => {
       <Route path="/profile/:username" element={<Profile />} />
       <Route path="/follow" element={<Follow />} />
       <Route path="/thread/:id" element={<ThreadDetail />} />
-      <Route path="/" element={<CheckToken />}>
-        <Route path="/reset-password" element={<ResetPassword />} />
-      </Route>
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
     </Routes>
   );
 };

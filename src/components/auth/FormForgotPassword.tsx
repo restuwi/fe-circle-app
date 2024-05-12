@@ -1,20 +1,15 @@
-import {
-  Button,
-  FormControl,
-  Heading,
-  Input,
-  Text,
-} from "@chakra-ui/react";
+import { Button, FormControl, Heading, Input, Text } from "@chakra-ui/react";
 import React from "react";
 import { APIForgotPassword } from "../../libs/api/call/auth";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 type Props = {
   changeForm: (form: string) => void;
 };
 
 const FormForgotPassword: React.FC<Props> = ({ changeForm }) => {
-  const navigate = useNavigate()
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  // const navigate = useNavigate()
   const [formInput, setFormInput] = React.useState<{
     email: string;
   }>({
@@ -24,11 +19,17 @@ const FormForgotPassword: React.FC<Props> = ({ changeForm }) => {
   const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const res = await APIForgotPassword(formInput.email);
       console.log(res);
-      navigate("/reset-password")
+      const confirm = window.confirm("Tekan tombol ok untuk reset password");
+      if (confirm) {
+        open(res.data.data, "_blank");
+      }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,6 +54,7 @@ const FormForgotPassword: React.FC<Props> = ({ changeForm }) => {
         />
       </FormControl>
       <Button
+        isLoading={isLoading}
         type="submit"
         variant={"solid"}
         color={"white"}

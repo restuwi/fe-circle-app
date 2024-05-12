@@ -10,8 +10,8 @@ import {
   InputRightElement,
   Text,
 } from "@chakra-ui/react";
-import { Link as ReactRouterLink } from "react-router-dom";
-import { Link as ChakraLink } from "@chakra-ui/react";
+// import { Link as ReactRouterLink } from "react-router-dom";
+// import { Link as ChakraLink } from "@chakra-ui/react";
 import React from "react";
 import { RiEyeCloseFill, RiEyeFill } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "../../store";
@@ -41,7 +41,9 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
     try {
       const token = (await dispatch(loginAsync(formInput))).payload;
       await dispatch(checkAsync(token));
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -102,7 +104,7 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
           variant={"link"}
           onClick={() => changeForm("forgot-password")}
           color={"gray"}
-          _hover={{color: "white"}}
+          _hover={{ color: "white" }}
         >
           Forgot Password?
         </Button>
