@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 import { IAuthLogin } from "../../types/app";
 import { loginSchema } from "../../libs/yup/validation/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AlertError } from "../../libs/sweetalert2";
+import { AlertError, AlertSuccess } from "../../libs/sweetalert2";
 
 type Props = {
   changeForm: (form: string) => void;
@@ -46,6 +46,7 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
       if (loginAsync.fulfilled.match(action)) {
         localStorage.setItem("token", action.payload);
         await dispatch(checkAsync(action.payload));
+        AlertSuccess("Login Succesfully");
       } else if (loginAsync.rejected.match(action)) {
         const errorText = action.payload as string;
         AlertError(errorText);

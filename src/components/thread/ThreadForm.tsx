@@ -4,7 +4,6 @@ import {
   Button,
   Flex,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Grid,
   GridItem,
@@ -17,6 +16,7 @@ import { RiImageAddLine } from "react-icons/ri";
 import { createThread } from "../../libs/api/call/thread";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getThreadsAsync } from "../../store/async/thread";
+import { AlertError, AlertSuccess } from "../../libs/sweetalert2";
 
 type Props = {
   placeholder?: string;
@@ -89,6 +89,7 @@ export const ThreadForm: React.FC<Props> = ({
       setIsLoading(true);
       if (formInput.content === "" && formInput.image === null) {
         setIsError(true);
+        throw new Error("Content and image cannot be both empty");
       }
 
       if (threadId) {
@@ -111,8 +112,10 @@ export const ThreadForm: React.FC<Props> = ({
         image: null,
       });
       setPreviewImages([]);
+      AlertSuccess("Thread has been created");
     } catch (error) {
-      console.log(error);
+      const err = error as unknown as Error;
+      AlertError(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -135,7 +138,7 @@ export const ThreadForm: React.FC<Props> = ({
           <Avatar size={"sm"} src={user?.profile.avatar} />
         </WrapItem>
 
-        <FormControl isRequired isInvalid={isError}>
+        <FormControl isInvalid={isError}>
           <Input
             type="text"
             name="content"
@@ -149,7 +152,6 @@ export const ThreadForm: React.FC<Props> = ({
             _placeholder={{ color: "gray" }}
             value={formInput.content}
           />
-          <FormErrorMessage>content is required.</FormErrorMessage>
         </FormControl>
         <Box display={"flex"}>
           <FormControl>
