@@ -25,10 +25,9 @@ const RootLayout: React.FC<Props> = ({
   return (
     <Flex minH="100vh" color={"white"} bgColor={"#1D1D1D"} overflowX={"hidden"}>
       <Box
-        flex={1.2}
-        px={"20px"}
-        pt={"20px"}
-        display={{ base: "none", md: "inline-block" }}
+        flex={{ base: "0", md: "1.5" }}
+        px={{ base: "0", md: "20px" }}
+        pt={{ base: "0", md: "20px" }}
       >
         <Sidebar />
       </Box>

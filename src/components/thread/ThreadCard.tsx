@@ -66,7 +66,7 @@ export const ThreadCard: React.FC<Props> = ({ thread }) => {
       <WrapItem>
         <Avatar
           size={"sm"}
-          src={`http://localhost:5000/uploads/${thread.author.profile.avatar}`}
+          src={thread.author.profile.avatar}
         />
       </WrapItem>
 

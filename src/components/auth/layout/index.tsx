@@ -2,42 +2,39 @@ import React from "react";
 import ModalDialog from "../../modalDialog/Index";
 import FormLogin from "../FormLogin";
 import FormRegister from "../FormRegister";
-import { Button, useDisclosure } from "@chakra-ui/react";
 import FormForgotPassword from "../FormForgotPassword";
 
 type Props = {
-  title: string;
-  form: string;
-  setForm: (form: string) => void;
+  form?: string;
+  setForm?: (form: string) => void;
+  triggerBtn: React.ReactNode;
+  isOpen: boolean;
+  onClose: () => void;
+  onOpen: () => void;
 };
 
-const AuthLayout: React.FC<Props> = ({ form, title, setForm }) => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
-
+const AuthLayout: React.FC<Props> = ({
+  form,
+  setForm,
+  triggerBtn,
+  isOpen,
+  onClose,
+  onOpen,
+}) => {
   return (
     <ModalDialog
       isOpen={isOpen}
       onClose={onClose}
       onOpen={onOpen}
       bgColor="#262626"
-      triggerBtn={
-        <Button
-          bgColor={"#04A51E"}
-          color={"white"}
-          rounded={"md"}
-          _hover={{ bgColor: "#018016" }}
-          onClick={onOpen}
-        >
-          {title}
-        </Button>
-      }
+      triggerBtn={triggerBtn}
       modalBody={
         form === "login" ? (
-          <FormLogin changeForm={setForm} />
+          <FormLogin changeForm={setForm!} />
         ) : form === "register" ? (
-          <FormRegister changeForm={setForm} />
+          <FormRegister changeForm={setForm!} />
         ) : (
-          <FormForgotPassword changeForm={setForm} />
+          <FormForgotPassword changeForm={setForm!} />
         )
       }
     />

@@ -28,7 +28,7 @@ type Props = {
 
 const FormLogin: React.FC<Props> = ({ changeForm }) => {
   const dispatch = useAppDispatch();
-  const { loading, errorMessage } = useAppSelector((state) => state.auth);
+  const { loading } = useAppSelector((state) => state.auth);
 
   const {
     register,
@@ -61,7 +61,7 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
       <Text mb={2} color={"white"} fontWeight={"bold"} fontSize={"1.2rem"}>
         Login
       </Text>
-      <FormControl mb={2} isInvalid={!!errors.username || !!errorMessage}>
+      <FormControl mb={2} isInvalid={!!errors.username}>
         <Input
           type="text"
           placeholder="Email or Username"
@@ -72,10 +72,10 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
           _placeholder={{ color: "gray" }}
         />
         <FormErrorMessage>
-          {(errors.username && errors.username.message) || errorMessage}
+          {errors.username && errors.username.message}
         </FormErrorMessage>
       </FormControl>
-      <FormControl mb={2} isInvalid={!!errors.password || !!errorMessage}>
+      <FormControl mb={2} isInvalid={!!errors.password}>
         <InputGroup size="md">
           <Input
             pr="4.5rem"
@@ -101,7 +101,7 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
           </InputRightElement>
         </InputGroup>
         <FormErrorMessage>
-          {(errors.password && errors.password.message) || errorMessage}
+          {errors.password && errors.password.message}
         </FormErrorMessage>
       </FormControl>
 

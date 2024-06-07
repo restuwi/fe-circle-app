@@ -96,11 +96,11 @@ export const ThreadForm: React.FC<Props> = ({
       }
 
       await createThread(formInput);
-      
+
       if (refetchReplies) {
         refetchReplies();
       }
-      
+
       if (onClose) {
         onClose();
       }
@@ -132,10 +132,7 @@ export const ThreadForm: React.FC<Props> = ({
         onSubmit={handlePost}
       >
         <WrapItem>
-          <Avatar
-            size={"sm"}
-            src={"http://localhost:5000/uploads/" + user?.profile.avatar}
-          />
+          <Avatar size={"sm"} src={user?.profile.avatar} />
         </WrapItem>
 
         <FormControl isRequired isInvalid={isError}>

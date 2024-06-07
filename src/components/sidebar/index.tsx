@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Icon, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Icon, useDisclosure } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useLocation } from "react-router-dom";
 import { Link as ChakraLink } from "@chakra-ui/react";
 import React, { useState } from "react";
@@ -12,11 +12,12 @@ import ModalDialog from "../modalDialog/Index";
 import { ThreadForm } from "../thread";
 import { getFollowersAsync, getFollowingAsync } from "../../store/async/follow";
 import AuthLayout from "../auth/layout";
+import { IconType } from "react-icons";
 
 type Navlink = {
   name: string;
   to: string;
-  icon: any;
+  icon: IconType;
 };
 
 const navLinks: Navlink[] = [
@@ -34,8 +35,10 @@ const Sidebar: React.FC = () => {
   const [formAuth, setFormAuth] = useState<string>("login");
 
   const handleFollows = async () => {
-    await dispatch(getFollowingAsync(auth.user?.id!));
-    await dispatch(getFollowersAsync(auth.user?.id!));
+    if (auth.user) {
+      await dispatch(getFollowingAsync(auth.user.id));
+      await dispatch(getFollowersAsync(auth.user.id));
+    }
   };
   return (
     <>
@@ -46,17 +49,48 @@ const Sidebar: React.FC = () => {
         as={ReactRouterLink}
         to="/"
         _hover={{ textDecoration: "none", color: "#04A51E" }}
+        display={{ base: "none", md: "flex" }}
       >
         Circle
       </ChakraLink>
       {!auth?.user ? (
         <Box display={"flex"} gap={"10px"}>
           <Box onClick={() => setFormAuth("login")}>
-            <AuthLayout title="Login" form={formAuth} setForm={setFormAuth} />
+            <AuthLayout
+              isOpen={isOpen}
+              onClose={onClose}
+              onOpen={onOpen}
+              triggerBtn={
+                <Button
+                  bgColor={"#04A51E"}
+                  color={"white"}
+                  rounded={"md"}
+                  _hover={{ bgColor: "#018016" }}
+                  onClick={onOpen}
+                >
+                  Login
+                </Button>
+              }
+              form={formAuth}
+              setForm={setFormAuth}
+            />
           </Box>
           <Box onClick={() => setFormAuth("register")}>
             <AuthLayout
-              title="Register"
+              isOpen={isOpen}
+              onClose={onClose}
+              onOpen={onOpen}
+              triggerBtn={
+                <Button
+                  bgColor={"#04A51E"}
+                  color={"white"}
+                  rounded={"md"}
+                  _hover={{ bgColor: "#018016" }}
+                  onClick={onOpen}
+                >
+                  Register
+                </Button>
+              }
               form={formAuth}
               setForm={setFormAuth}
             />
@@ -146,61 +180,68 @@ const Sidebar: React.FC = () => {
           >
             Logout
           </Button>
-          {/* <Box
-bg={"#262626"}
-display={{ base: "flex", md: "none" }}
-justifyContent={"space-around"}
-py={"12px"}
->
-{navLinks.map((link: Navlink, index: number) => (
-  <ChakraLink
-    key={index}
-    display={"flex"}
-    alignItems={"center"}
-    onClick={link.name === "Follows" ? fetchFollows : undefined}
-    to={
-      link.name === "Profile" ? link.to + auth.user?.username : link.to
-    }
-    as={ReactRouterLink}
-    color={location.pathname === `${link.to}` ? "#04A51E" : "white"}
-    _hover={{
-      textDecoration: "none",
-      fontWeight: "bold",
-      color: "#04A51E",
-    }}
-    fontWeight={location.pathname === `${link.to}` ? "bold" : ""}
-  >
-    <Icon as={link.icon} mr={"10px"} />
-  </ChakraLink>
-))}
-<Box position={"absolute"} top={"-10px"}>
-  <ModalDialog
-    isOpen={isOpen}
-    onClose={onClose}
-    onOpen={onOpen}
-    modalSize="xl"
-    bgColor="#262626"
-    triggerBtn={
-      <Button
-        bgColor={"#04A51E"}
-        color={"white"}
-        rounded={"full"}
-        _hover={{ bgColor: "#018016" }}
-        onClick={onOpen}
-      >
-        <RiAddCircleLine />
-      </Button>
-    }
-    modalBody={
-      <ThreadForm
-        onClose={onClose}
-        placeholder="what's on your mind"
-        btnName="Post"
-      />
-    }
-  />
-</Box>
-</Box> */}
+          <Box
+            bg={"#262626"}
+            display={{ base: "flex", md: "none" }}
+            position={"fixed"}
+            bottom={0}
+            left={0}
+            right={0}
+            zIndex={999}
+            justifyContent={"space-around"}
+            py={"12px"}
+          >
+            {navLinks.map((link: Navlink, index: number) => (
+              <ChakraLink
+                key={index}
+                display={"flex"}
+                alignItems={"center"}
+                onClick={link.name === "Follows" ? handleFollows : undefined}
+                to={
+                  link.name === "Profile"
+                    ? link.to + auth.user?.username
+                    : link.to
+                }
+                as={ReactRouterLink}
+                color={location.pathname === `${link.to}` ? "#04A51E" : "white"}
+                _hover={{
+                  textDecoration: "none",
+                  fontWeight: "bold",
+                  color: "#04A51E",
+                }}
+                fontWeight={location.pathname === `${link.to}` ? "bold" : ""}
+              >
+                <Icon as={link.icon} mr={"10px"} />
+              </ChakraLink>
+            ))}
+            <Box position={"absolute"} top={"-10px"}>
+              <ModalDialog
+                isOpen={isOpen}
+                onClose={onClose}
+                onOpen={onOpen}
+                modalSize="xl"
+                bgColor="#262626"
+                triggerBtn={
+                  <Button
+                    bgColor={"#04A51E"}
+                    color={"white"}
+                    rounded={"full"}
+                    _hover={{ bgColor: "#018016" }}
+                    onClick={onOpen}
+                  >
+                    <RiAddCircleLine />
+                  </Button>
+                }
+                modalBody={
+                  <ThreadForm
+                    onClose={onClose}
+                    placeholder="what's on your mind"
+                    btnName="Post"
+                  />
+                }
+              />
+            </Box>
+          </Box>
         </>
       )}
     </>
