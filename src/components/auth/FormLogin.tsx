@@ -21,9 +21,10 @@ import { IAuthLogin } from "../../types/app";
 import { loginSchema } from "../../libs/yup/validation/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AlertError, AlertSuccess } from "../../libs/sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
-  changeForm: (form: string) => void;
+  changeForm?: (form: string) => void;
 };
 
 const FormLogin: React.FC<Props> = ({ changeForm }) => {
@@ -39,7 +40,7 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
   });
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
-
+  const navigate = useNavigate();
   const handleLogin = async (data: IAuthLogin) => {
     try {
       const action = await dispatch(loginAsync(data));
@@ -54,6 +55,16 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const navigateRegister = () => {
+    if (changeForm) changeForm("register");
+    navigate("/register");
+  };
+
+  const navigateForgtotPassword = () => {
+    if (changeForm) changeForm("forgot-password");
+    navigate("/forgot-password");
   };
 
   return (
@@ -110,7 +121,7 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
         <Button
           size={"sm"}
           variant={"link"}
-          onClick={() => changeForm("forgot-password")}
+          onClick={navigateForgtotPassword}
           color={"gray"}
           _hover={{ color: "white" }}
         >
@@ -123,7 +134,7 @@ const FormLogin: React.FC<Props> = ({ changeForm }) => {
         <Text color={"white"} fontSize={"sm"}>
           Don't have an account yet?
           <Button
-            onClick={() => changeForm("register")}
+            onClick={navigateRegister}
             variant={"link"}
             color={"#04A51E"}
             size={"sm"}

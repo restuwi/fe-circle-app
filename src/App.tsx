@@ -8,7 +8,11 @@ import "./App.css";
 import ThreadDetail from "./pages/threadDetail";
 import { useAppDispatch } from "./store";
 import { checkAsync } from "./store/async/auth";
-import ResetPassword from "./pages/reset-password";
+import NotFound from "./pages/not-found";
+import Login from "./pages/auth/login";
+import ForgotPassword from "./pages/auth/forgot-password";
+import ResetPassword from "./pages/auth/reset-password";
+import Register from "./pages/auth/register";
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -26,10 +30,15 @@ const App: React.FC = () => {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/search" element={<Search />} />
-      <Route path="/profile/:username" element={<Profile />} />
       <Route path="/follow" element={<Follow />} />
       <Route path="/thread/:id" element={<ThreadDetail />} />
+
+      <Route path="/:username" element={<Profile />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

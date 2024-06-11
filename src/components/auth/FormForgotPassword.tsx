@@ -1,21 +1,29 @@
 import { Button, FormControl, Heading, Input, Text } from "@chakra-ui/react";
 import React from "react";
 import { APIForgotPassword } from "../../libs/api/call/auth";
+import { useNavigate } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 
 type Props = {
-  changeForm: (form: string) => void;
+  changeForm?: (form: string) => void;
 };
 
 const FormForgotPassword: React.FC<Props> = ({ changeForm }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  // const navigate = useNavigate()
+  const navigate = useNavigate();
   const [formInput, setFormInput] = React.useState<{
     email: string;
   }>({
     email: "",
   });
 
+  const navigateLogin = () => {
+    if (changeForm) {
+      changeForm("login");
+    } else {
+      navigate("/login");
+    }
+  };
   const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -70,7 +78,7 @@ const FormForgotPassword: React.FC<Props> = ({ changeForm }) => {
       <Text color={"white"} fontSize={"sm"}>
         Already have Account?{" "}
         <Button
-          onClick={() => changeForm("login")}
+          onClick={navigateLogin}
           variant={"link"}
           color={"#04A51E"}
           size={"sm"}

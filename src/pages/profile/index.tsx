@@ -22,7 +22,7 @@ import ThreadDetailImage from "../../components/thread/ThreadDetailImage";
 const Profile: React.FC = () => {
   const { username } = useParams();
   const user = useAppSelector((state) => state.auth).user;
-  const [active, setActive] = useState<Boolean>(true);
+  const [active, setActive] = useState(true);
   const [profile, setProfile] = useState<IUser>({
     follower: [],
     following: [],

@@ -17,9 +17,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../../libs/yup/validation/auth";
 import { IAuthRegister } from "../../types/app";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
-  changeForm: (form: string) => void;
+  changeForm?: (form: string) => void;
 };
 
 const FormRegister: React.FC<Props> = ({ changeForm }) => {
@@ -33,16 +34,24 @@ const FormRegister: React.FC<Props> = ({ changeForm }) => {
   });
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
-
+  const navigate = useNavigate();
   const handleRegister = async (data: IAuthRegister) => {
     try {
       setIsLoading(true);
       await APIRegister(data);
-      changeForm("login");
+      changeForm && changeForm("login");
     } catch (error) {
       console.log(error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const navigateLogin = () => {
+    if (changeForm) {
+      changeForm("login");
+    } else {
+      navigate("/login");
     }
   };
 
@@ -122,12 +131,40 @@ const FormRegister: React.FC<Props> = ({ changeForm }) => {
           {errors.password && errors.password.message}
         </FormErrorMessage>
       </FormControl>
+      <FormControl mb={2} isInvalid={!!errors.password}>
+        <InputGroup size="md">
+          <Input
+            pr="4.5rem"
+            type={show ? "text" : "password"}
+            color={"white"}
+            {...register("confirmPassword")}
+            focusBorderColor="white"
+            borderColor={"gray"}
+            _placeholder={{ color: "gray" }}
+            placeholder="Confirm password"
+          />
+          <InputRightElement width="4.5rem">
+            <Button
+              h="1.75rem"
+              size="sm"
+              variant={"ghost"}
+              colorScheme="whiteAlpha"
+              onClick={handleClick}
+            >
+              {show ? <RiEyeFill /> : <RiEyeCloseFill />}
+            </Button>
+          </InputRightElement>
+        </InputGroup>
+        <FormErrorMessage>
+          {errors.password && errors.password.message}
+        </FormErrorMessage>
+      </FormControl>
       <Divider my={4} />
       <Flex justifyContent={"space-between"} alignItems={"center"} mt={4}>
         <Text color={"white"} fontSize={"sm"}>
           Already have Account?{" "}
           <Button
-            onClick={() => changeForm("login")}
+            onClick={navigateLogin}
             variant={"link"}
             color={"#04A51E"}
             size={"sm"}

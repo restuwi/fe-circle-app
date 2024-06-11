@@ -19,9 +19,7 @@ const Home: React.FC = () => {
       title="Home"
       childrenMain={
         <>
-          {auth.user && (
-            <ThreadForm btnName="Post" placeholder="What's on your mind?" />
-          )}
+          <ThreadForm btnName="Post" placeholder="What's on your mind?" />
           <Divider color={"gray"} />
           {!loading ? (
             threads?.map((thread) => (

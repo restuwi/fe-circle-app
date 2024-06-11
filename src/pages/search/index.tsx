@@ -7,6 +7,7 @@ import {
   InputGroup,
   InputLeftElement,
   Text,
+  Spinner,
 } from "@chakra-ui/react";
 import { RiSearchLine } from "react-icons/ri";
 import { IUser } from "../../types/app";
@@ -19,37 +20,45 @@ import { ProfileCard } from "../../components/profile";
 const Search: React.FC = () => {
   const [formSearch, setFormSearch] = useState<string>("");
   const [users, setUsers] = useState<IUser[] | null>(null);
-  const user = useAppSelector((state) => state.auth).user;
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const user = useAppSelector((state) => state.auth.user);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormSearch(e.target.value);
   };
 
   const searching = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const res = await search(formSearch);
       setUsers(res.data.data);
     } catch (error) {
       console.error(error);
+      setError("Failed to fetch search results. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchSuggestion = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const res = await getSuggestions();
       setUsers(res.data.data);
     } catch (error) {
       console.error(error);
+      setError("Failed to fetch suggestions. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      await searching();
-    } catch (error) {
-      console.error(error);
-    }
+    await searching();
   };
 
   useEffect(() => {
@@ -65,7 +74,10 @@ const Search: React.FC = () => {
       title="Search"
       childrenMain={
         <>
-          <form onSubmit={handleSearch} style={{ paddingInline: "1rem", marginTop: "1rem" }}>
+          <form
+            onSubmit={handleSearch}
+            style={{ paddingInline: "1rem", marginTop: "1rem" }}
+          >
             <FormControl>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
@@ -85,18 +97,34 @@ const Search: React.FC = () => {
           </form>
 
           <Flex p={5} flexDir={"column"} h={"80%"}>
-            {users && users.length === 0 ? (
+            {loading ? (
+              <Flex h="full" alignItems="center" justifyContent="center">
+                <Spinner size="xl" color="white" />
+              </Flex>
+            ) : error ? (
               <Flex
-                h={"full"}
-                flexDir={"column"}
-                color={"white"}
-                alignItems={"center"}
-                justifyContent={"center"}
+                h="full"
+                alignItems="center"
+                justifyContent="center"
+                flexDir="column"
+                color="red.500"
               >
-                <Text fontSize={"1.2rem"} fontWeight={"bold"}>
+                <Text fontSize="1.2rem" fontWeight="bold">
+                  {error}
+                </Text>
+              </Flex>
+            ) : formSearch && users && users.length === 0 ? (
+              <Flex
+                h="full"
+                flexDir="column"
+                color="white"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Text fontSize="1.2rem" fontWeight="bold">
                   No results for <q>{formSearch}</q>{" "}
                 </Text>
-                <Text as={"span"} w={"80%"} color={"gray"} textAlign={"center"}>
+                <Text as="span" w="80%" color="gray" textAlign="center">
                   Try searching for something else or check the spelling of what
                   you typed.
                 </Text>
@@ -107,7 +135,9 @@ const Search: React.FC = () => {
           </Flex>
         </>
       }
-      childrenAside={<>{user && <ProfileCard user={user} bgColor="#262626" />}</>}
+      childrenAside={
+        <>{user && <ProfileCard user={user} bgColor="#262626" />}</>
+      }
     />
   );
 };
